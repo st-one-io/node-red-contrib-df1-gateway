@@ -1,0 +1,77 @@
+<script type="text/javascript">
+    RED.nodes.registerType('df1 gateway',{
+        category: 'gateway',
+        color: '#7591AC',
+        defaults: {
+            endpoint: {
+                value: "",
+                type: "df1 endpoint"
+            },
+            mode: {
+                value: "single"
+            },
+            variable: {
+                value: ""
+            },
+            name: {
+                value: ""
+            },
+            nameGateway: {
+                value: ""
+            }
+        },
+        inputs:0,
+        outputs:0,
+        icon: "file.png",
+        paletteLabel: "df1 gateway",
+        label: function () {
+			    if (this.name) return this.name;
+                return this._("df1gateway.in.label.name");
+            },
+        labelStyle: function () {
+            return this.name ? "node_label_italic" : "";
+        },
+        oneditprepare: function () {
+            var self = this;
+            var endpointList = $("#node-input-endpoint");
+
+            function updateVarList(endpointId) {
+                var endpointNode = RED.nodes.node(endpointId);
+                if (!endpointNode) return;
+            }
+
+            endpointList.change(function () {
+                updateVarList(endpointList.val());
+            });
+            updateVarList(self.endpoint);
+        },
+    });
+</script>
+
+<script type="text/html" data-template-name="df1 gateway">
+
+    <div class="form-row">
+        <label for="node-input-endpoint">
+            <i class="fa fa-cog"></i>
+            <span data-i18n="df1gateway.in.label.endpoint"></span>
+        </label>
+        <input type="text" id="node-input-endpoint" data-i18n="[placeholder]df1gateway.in.label.endpoint">
+    </div>
+
+    <div class="form-row">
+        <label for="node-input-nameGateway">
+            <i class="fa fa-tag"></i>
+            <span data-i18n="df1gateway.label.namegateway"></span>
+        </label>
+        <input type="text" id="node-input-nameGateway" data-i18n="[placeholder]df1gateway.label.namegateway">
+    </div> 
+
+    <div class="form-row">
+        <label for="node-input-name">
+            <i class="fa fa-tag"></i>
+            <span data-i18n="df1gateway.label.name"></span>
+        </label>
+        <input type="text" id="node-input-name" data-i18n="[placeholder]df1gateway.label.name">
+    </div> 
+
+</script>

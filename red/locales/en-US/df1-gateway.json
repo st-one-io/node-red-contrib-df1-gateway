@@ -1,0 +1,28 @@
+{
+    "df1gateway":{
+        "in": {
+            "label": {
+                "name": "df1 gateway",
+                "endpoint": "PLC",
+                "mode": "Mode",
+                "variable": "Variable",
+                "diff": "Emit only when value changes (diff)",
+                "variable-select": "Select a variable",
+                "variable-novar": "No variables"
+            },
+            "mode": {
+                "single": "Single variable",
+                "all-split": "All variables, one per message",
+                "all": "All variables"
+            }
+        },
+        "label": {
+            "name": "Name",
+            "namegateway": "Gateway Name"
+        },
+        "error": {
+            "missingconfig": "Missing configuration",
+            "invalidcontrolfunction": "Invalid control function \"__function__\""
+        }
+    }
+}
