@@ -13,7 +13,7 @@
   },
   "author": "Fernando Amorim",
   "license": "ISC",
-  "dependencies": {
-    "node-df1-gateway": "file:../node-df1-gateway"
+  "optionalDependencies": {
+    "@protocols/node-df1-gateway": "^1.0.0"
   }
 }
