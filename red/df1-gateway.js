@@ -1,4 +1,4 @@
-const Gateway = require('node-df1-gateway').gatewayConnect
+const Gateway = require('@protocols/node-df1-gateway').gatewayConnect
 
 module.exports = function (RED) {
     function df1Gateway(config) {
