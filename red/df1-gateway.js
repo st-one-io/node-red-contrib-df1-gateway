@@ -1,8 +1,21 @@
-const Gateway = require('@protocols/node-df1-gateway').gatewayConnect
+try {
+    var Gateway = require('@protocols/node-df1-gateway').gatewayConnect
+} catch (error) {
+    var Gateway = null;
+}
+
 
 module.exports = function (RED) {
     function df1Gateway(config) {
         RED.nodes.createNode(this,config);
+        
+        this.on('close',() => {
+            if (serverClosed == false) {
+                closeServer();
+            };
+        });
+        
+        if (!Gateway) return this.error('Missing "@protocols/node-df1-gateway" dependency, avaliable only on the ST-One hardware. Please contact us at "st-one.io" for pricing and more information.') 
         
         const server = new Gateway({productName: config.nameGateway})
         const endpoint = RED.nodes.getNode(config.endpoint);
@@ -23,11 +36,6 @@ module.exports = function (RED) {
             });
         });
 
-        this.on('close',() => {
-            if (serverClosed == false) {
-                closeServer();
-            };
-        });
 
         server.on('error',(err) => {
             if (serverClosed == false) {
