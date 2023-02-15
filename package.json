@@ -16,7 +16,8 @@
     "rockwell",
     "df1",
     "gateway",
-    "node-red"
+    "node-red",
+    "allenbradley"
   ],
   "bugs":{
     "url": "https://github.com/st-one-io/node-red-contrib-df1-gateway/issues"
