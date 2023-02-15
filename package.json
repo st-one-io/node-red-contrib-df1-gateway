@@ -11,6 +11,21 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "keywords": [
+    "plc",
+    "rockwell",
+    "df1",
+    "gateway",
+    "node-red"
+  ],
+  "bugs":{
+    "url": "https://github.com/st-one-io/node-red-contrib-df1-gateway/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/st-one-io/node-red-contrib-df1-gateway.git"
+  },
+  "homepage": "https://github.com/st-one-io/node-red-contrib-df1-gateway#readme",
   "author": "Fernando Amorim",
   "license": "ISC",
   "optionalDependencies": {
