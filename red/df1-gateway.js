@@ -23,17 +23,13 @@ module.exports = function (RED) {
         let serverClosed = true;
 
         endpoint.on('connected', () => {
-            endpoint.getDf1Session()
-            .then((res) => {
-                registerSession(res);
-            });
+            const session = endpoint.getDf1Session()
+            if(session) registerSession(session);
         });
 
         endpoint.on('error', () => {
-            endpoint.getDf1Session()
-            .then((res) => {
-                unRegisterSession(res);
-            });
+            const session = endpoint.getDf1Session();
+            if(session) unRegisterSession(session);
         });
 
 
