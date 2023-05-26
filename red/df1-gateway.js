@@ -17,28 +17,28 @@ module.exports = function (RED) {
         
         if (!Gateway) return this.error('Missing "@protocols/node-df1-gateway" dependency, avaliable only on the ST-One hardware. Please contact us at "st-one.io" for pricing and more information.') 
 
-        node.df1 = RED.nodes.getNode(config.df1);
-        if (!node.df1) {
-            return node.error(RED._("df1.error.missingconfig"));
+        this.df1 = RED.nodes.getNode(config.endpoint);
+        if (!this.df1) {
+            return this.error(RED._("df1.error.missingconfig"));
         }
         
         const server = new Gateway({productName: config.nameGateway})
-        const endpoint = RED.nodes.getNode(config.endpoint);
+        const df1 = this.df1.df1Endpoint()
         let that = this;
         let serverClosed = true;
         
-        endpoint.on('connected', () => {
-            const session = endpoint.getDf1Session()
+        df1.on('connected', () => {
+            const session = this.df1.getDf1Session()
             if(session) registerSession(session);
         });
 
-        endpoint.on('error', () => {
-            const session = endpoint.getDf1Session();
+        df1.on('error', () => {
+            const session = this.df1.getDf1Session();
             if(session) unRegisterSession(session);
         });
 
-        endpoint.on('timeout', () => {
-            const session = endpoint.getDf1Session();
+        df1.on('timeout', () => {
+            const session = this.df1.getDf1Session();
             if(session) unRegisterSession(session);
         })
 
