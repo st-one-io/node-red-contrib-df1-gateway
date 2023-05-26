@@ -1,6 +1,6 @@
 {
   "name": "node-red-contrib-df1-gateway",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "",
   "main": "df1-gateway.js",
   "node-red": {
@@ -30,6 +30,6 @@
   "author": "Fernando Amorim",
   "license": "ISC",
   "optionalDependencies": {
-    "@protocols/node-df1-gateway": "^1.0.1"
+    "@protocols/node-df1-gateway": "^1.0.2"
   }
 }
