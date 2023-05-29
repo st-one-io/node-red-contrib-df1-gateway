@@ -38,13 +38,23 @@ module.exports = function (RED) {
         });
 
         df1.on('error', () => {
-            const session = this.df1.getDf1Session();
-            if(session) unRegisterSession(session);
+            const df1protocol = df1.df1Protocol;
+
+            if (df1protocol) {
+                const session = df1protocol.dataLinkSession;
+
+                if(session) unRegisterSession(session);
+            }
         });
 
         df1.on('timeout', () => {
-            const session = this.df1.getDf1Session();
-            if(session) unRegisterSession(session);
+            const df1protocol = df1.df1Protocol;
+
+            if (df1protocol) {
+                const session = df1protocol.dataLinkSession;
+
+                if(session) unRegisterSession(session);
+            }
         })
 
 
