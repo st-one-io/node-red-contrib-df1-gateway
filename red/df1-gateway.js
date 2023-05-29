@@ -28,8 +28,13 @@ module.exports = function (RED) {
         let serverClosed = true;
         
         df1.on('connected', () => {
-            const session = this.df1.getDf1Session()
-            if(session) registerSession(session);
+            const df1protocol = df1.df1Protocol;
+
+            if (df1protocol) {
+                const session = df1protocol.dataLinkSession;
+
+                if(session) registerSession(session);
+            }
         });
 
         df1.on('error', () => {
