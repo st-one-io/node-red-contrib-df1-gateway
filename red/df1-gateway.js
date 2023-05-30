@@ -27,36 +27,24 @@ module.exports = function (RED) {
         let that = this;
         let serverClosed = true;
         
-        df1.on('connected', () => {
+        df1.on('connected', () => registerSession());
+        df1.on('error', () => unRegisterSession());
+        df1.on('timeout', () => unRegisterSession());
+
+        this.getDf1Session  = () => {
             const df1protocol = df1.df1Protocol;
+            if(df1protocol) return df1protocol.dataLinkSession;
+        }
 
-            if (df1protocol) {
-                const session = df1protocol.dataLinkSession;
+        function registerSession() {
+            const session = this.getDf1Session();
+            if(session) server.registerDf1(session);
+        };
 
-                if(session) registerSession(session);
-            }
-        });
-
-        df1.on('error', () => {
-            const df1protocol = df1.df1Protocol;
-
-            if (df1protocol) {
-                const session = df1protocol.dataLinkSession;
-
-                if(session) unRegisterSession(session);
-            }
-        });
-
-        df1.on('timeout', () => {
-            const df1protocol = df1.df1Protocol;
-
-            if (df1protocol) {
-                const session = df1protocol.dataLinkSession;
-
-                if(session) unRegisterSession(session);
-            }
-        })
-
+        function unRegisterSession() {
+            const session = this.getDf1Session();
+            if(session) server.unRegisterDf1(session);
+        };
 
         server.on('error',(err) => {
             if (serverClosed == false) {
@@ -75,14 +63,6 @@ module.exports = function (RED) {
 
         if(serverClosed == true) {
             server.open();
-        };
-
-        function registerSession(df1) {
-            server.registerDf1(df1);
-        };
-
-        function unRegisterSession(df1) {
-            server.unRegisterDf1(df1);
         };
 
         function closeServer(){
