@@ -65,7 +65,7 @@ module.exports = function (RED) {
             
         }
 
-        function getDf1Session{
+        function getDf1Session() {
             const df1protocol = df1.df1Protocol;
             if(df1protocol) return df1protocol.dataLinkSession;
         }
