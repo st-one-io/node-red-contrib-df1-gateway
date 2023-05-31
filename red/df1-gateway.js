@@ -23,13 +23,47 @@ module.exports = function (RED) {
         }
         
         const server = new Gateway({productName: config.nameGateway})
-        const df1 = this.df1.df1Endpoint()
+        let df1 = null;
         let that = this;
         let serverClosed = true;
-        
-        df1.on('connected', () => registerSession());
-        df1.on('error', () => unRegisterSession());
-        df1.on('timeout', () => unRegisterSession());
+        let _reconnectTimeout = null;
+
+        function connect() {
+
+            if (_reconnectTimeout !== null) {
+                clearTimeout(_reconnectTimeout);
+                _reconnectTimeout = null;
+            };
+
+            df1 = this.df1.df1Endpoint();
+
+            if(df1){
+                df1.on('connected', () => registerSession());
+                df1.on('error', () => unRegisterSession());
+                df1.on('timeout', () => unRegisterSession());
+                df1.on('disconnect', () => onDisconnect());
+            }else{
+                onDisconnect();
+            }
+        }
+
+        function onDisconnect() {
+            if(df1 !== null){
+                df1.removeListener('connected',registerSession);
+                df1.removeListener('error',unRegisterSession);
+                df1.removeListener('timeout',unRegisterSession);
+                df1.removeListener('disconnect',onDisconnect);
+
+                unRegisterSession();
+
+                df1 = null;
+            };
+
+            if (!_reconnectTimeout) {
+                _reconnectTimeout = setTimeout(connect, 5000);
+            };
+            
+        }
 
         this.getDf1Session  = () => {
             const df1protocol = df1.df1Protocol;
@@ -75,6 +109,8 @@ module.exports = function (RED) {
             });
             server.close();
         };
+
+        connect();
     };
 
     function manageStatus(status,conn) {
