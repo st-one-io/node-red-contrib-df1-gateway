@@ -65,18 +65,18 @@ module.exports = function (RED) {
             
         }
 
-        this.getDf1Session  = () => {
+        function getDf1Session{
             const df1protocol = df1.df1Protocol;
             if(df1protocol) return df1protocol.dataLinkSession;
         }
 
         function registerSession() {
-            const session = this.getDf1Session();
+            const session = getDf1Session();
             if(session) server.registerDf1(session);
         };
 
         function unRegisterSession() {
-            const session = this.getDf1Session();
+            const session = getDf1Session();
             if(session) server.unRegisterDf1(session);
         };
 
