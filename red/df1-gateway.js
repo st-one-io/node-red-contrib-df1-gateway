@@ -38,10 +38,10 @@ module.exports = function (RED) {
             df1 = configNode.df1Endpoint();
 
             if(df1){
-                df1.on('connected', () => registerSession());
-                df1.on('error', () => unRegisterSession());
-                df1.on('timeout', () => unRegisterSession());
-                df1.on('disconnect', () => onDisconnect());
+                df1.on('connected',registerSession);
+                df1.on('error',unRegisterSession);
+                df1.on('timeout',unRegisterSession);
+                df1.on('disconnect',onDisconnect);
             }else{
                 onDisconnect();
             }
