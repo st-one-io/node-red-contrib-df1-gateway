@@ -17,31 +17,68 @@ module.exports = function (RED) {
         
         if (!Gateway) return this.error('Missing "@protocols/node-df1-gateway" dependency, avaliable only on the ST-One hardware. Please contact us at "st-one.io" for pricing and more information.') 
 
-        node.df1 = RED.nodes.getNode(config.df1);
-        if (!node.df1) {
-            return node.error(RED._("df1.error.missingconfig"));
+        const configNode = RED.nodes.getNode(config.endpoint);
+        if (!configNode) {
+            return this.error(RED._("df1.error.missingconfig"));
         }
         
         const server = new Gateway({productName: config.nameGateway})
-        const endpoint = RED.nodes.getNode(config.endpoint);
+        let df1 = null;
         let that = this;
         let serverClosed = true;
-        
-        endpoint.on('connected', () => {
-            const session = endpoint.getDf1Session()
-            if(session) registerSession(session);
-        });
+        let _reconnectTimeout = null;
 
-        endpoint.on('error', () => {
-            const session = endpoint.getDf1Session();
-            if(session) unRegisterSession(session);
-        });
+        function connect() {
 
-        endpoint.on('timeout', () => {
-            const session = endpoint.getDf1Session();
-            if(session) unRegisterSession(session);
-        })
+            if (_reconnectTimeout !== null) {
+                clearTimeout(_reconnectTimeout);
+                _reconnectTimeout = null;
+            };
 
+            df1 = configNode.df1Endpoint();
+
+            if(df1){
+                df1.on('connected',registerSession);
+                df1.on('error',unRegisterSession);
+                df1.on('timeout',unRegisterSession);
+                df1.on('disconnect',onDisconnect);
+            }else{
+                onDisconnect();
+            }
+        }
+
+        function onDisconnect() {
+            if(df1 !== null){
+                df1.removeListener('connected',registerSession);
+                df1.removeListener('error',unRegisterSession);
+                df1.removeListener('timeout',unRegisterSession);
+                df1.removeListener('disconnect',onDisconnect);
+
+                unRegisterSession();
+
+                df1 = null;
+            };
+
+            if (!_reconnectTimeout) {
+                _reconnectTimeout = setTimeout(connect, 5000);
+            };
+            
+        }
+
+        function getDf1Session() {
+            const df1protocol = df1.df1Protocol;
+            if(df1protocol) return df1protocol.dataLinkSession;
+        }
+
+        function registerSession() {
+            const session = getDf1Session();
+            if(session) server.registerDf1(session);
+        };
+
+        function unRegisterSession() {
+            const session = getDf1Session();
+            if(session) server.unRegisterDf1(session);
+        };
 
         server.on('error',(err) => {
             if (serverClosed == false) {
@@ -62,14 +99,6 @@ module.exports = function (RED) {
             server.open();
         };
 
-        function registerSession(df1) {
-            server.registerDf1(df1);
-        };
-
-        function unRegisterSession(df1) {
-            server.unRegisterDf1(df1);
-        };
-
         function closeServer(){
             serverClosed = true;
 
@@ -80,6 +109,8 @@ module.exports = function (RED) {
             });
             server.close();
         };
+
+        connect();
     };
 
     function manageStatus(status,conn) {
